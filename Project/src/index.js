@@ -1,5 +1,6 @@
 // require('dotenv').config({path: './env'})
 import dotenv from 'dotenv'
+import { app } from './app.js'
 
 
 import connectDB from './db/index.js'
@@ -9,7 +10,22 @@ dotenv.config({
 })
 
 
-connectDB();
+connectDB()
+.then( () => {
+    //app.listen se phle err bhi listen karke dekh lo 
+    app.on("ERROR",(error)=>{
+        console.log("ERR:",error);
+        throw error;
+    });
+})
+.then( () => {
+    app.listen(process.env.PORT || 8000 , ()=> {
+        console.log(`Server is running on port ${process.env.PORT}`)
+    });
+})
+.catch( (err) => {
+    console.log("MPNGO DB connevtion is failed !! ", err)
+})
 
 
 
